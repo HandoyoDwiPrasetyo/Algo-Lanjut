@@ -32,20 +32,19 @@ void shell(biodata bdt[], int &data);
 void merge(biodata bdt[], int l, int m, int r);
 void mergeSort(biodata bdt[], int l, int r);
 void quick(biodata bdt[], int awal, int akhir);
-//void sambung();
+
 void tulisdata(ofstream &data_tulis, int &data, biodata bdt[], string &hasil_sambung);
 void tulisdata_urut(ofstream &data_tulis, int &data, biodata bdt[], string &hasil_urut);
 void bacadata(ifstream &datamasuk, int &data, biodata bdt[], string &namafile);
-string namafile, namabatas, namafasil, hasil_sambung,hasil_sambung2,hasil_sambung3, hasil_urut, hasil_urut2, hasil_urut3;
 
 biodata bdt[100], temp;
-string file;
-char kembali, namafile_sambung1[20], namafile_sambung2[20], banyak_data1[20], banyak_data2[20], banyak_file1[20];
+string namafile, namabatas, namafasil, hasil_sambung,hasil_sambung2,hasil_sambung3, hasil_urut, hasil_urut2, hasil_urut3;
+char kembali;
 bool found;
-int  data, banyakdata1, banyakdata2, pilihtransaksi, batas;
-ifstream data_masuk, input, sambung_masuk1, sambung_masuk2, banyak_keluar1, banyak_keluar2 , batas_output1, batas_output2, batas_output3;
-ofstream  hasil_masuk, data_tulis;
-fstream dataku, output, batas_input1, batas_input3;
+int  data, batas;
+ifstream data_masuk, batas_output1, batas_output3;//merepresentasikan stream file input : ( membaca informasi dari dalam file )
+ofstream   data_tulis; //merepresentasikan stream file output : ( membuat file & menuliskan informasi ke dalam file )
+fstream dataku, batas_input1, batas_input3;//gabungan dari ifstream dan ofstream
 
 int main(){
 	do{
@@ -57,8 +56,8 @@ int main(){
 			cout<<"Masukkan Nama File : ";cin>>namafile;
 			cout<<"Masukkan Nama File Untuk Simpan Banyak Data : ";cin>>namabatas;
 			cout<<"Masukkan Nama File yang untuk simpan banyak fasilitas : ";cin>>namafasil;
-			dataku.open(namafile.c_str(), ios::trunc | ios::out);
-			batas_input1.open(namabatas.c_str(), ios::out | ios::trunc);
+			dataku.open(namafile.c_str(), ios::trunc | ios::out);			//ios::out = membuka file dan menuliskan di dalam nya
+			batas_input1.open(namabatas.c_str(), ios::out | ios::trunc); 	//ios::trunc = jika file sudah ada akan di potong sebelum membuka file
 			batas_input3.open(namafasil.c_str(), ios::out | ios::trunc);
 			batas_input1<<data;
 			for(int i=0; i<data; i++){
@@ -142,13 +141,14 @@ int main(){
 			}
 		break;
 		case 3 :	system("cls");
+		int pilihtransaksi;
 			cout<<"Menu Transaksi : "<<endl;
 			cout<<"1. Merging Sambung "<<endl;
 			cout<<"2. Merging Urut "<<endl;
 			cout<<"Pilih Transaksi : ";cin>>pilihtransaksi;
 			switch(pilihtransaksi){
 					case 1 :
-						cout<<"Merging Sambung"<<endl;
+						cout<<endl<<"Merging Sambung"<<endl;
 						cout<<"Masukkan Nama file Hasil Merging Sambung : ";cin>>hasil_sambung;
 						cout<<"Masukkan Nama file Hasil data Merging Sambung : ";cin>>hasil_sambung2;
 						cout<<"Masukkan Nama file Hasil fasil Merging Sambung : ";cin>>hasil_sambung3;
@@ -158,7 +158,7 @@ int main(){
 						tulisdata(data_tulis, data, bdt, hasil_sambung);
 					break;
 					case 2 :
-						cout<<"Merging Urut"<<endl;
+						cout<<endl<<"Merging Urut"<<endl;
 						cout<<"Masukkan Nama file Hasil Merging Urut : ";cin>>hasil_urut;
 						cout<<"Masukkan Nama file Hasil data Merging Urut : ";cin>>hasil_urut2;
 						cout<<"Masukkan Nama file Hasil fasil Merging Urut : ";cin>>hasil_urut3;
@@ -237,7 +237,7 @@ void urutan(biodata bdt[], int &data){
 	}
 }
 
-void sequential(int &data){ //system("cls");
+void sequential(int &data){ 
 	string cari;
 	cout<<"--------------------------------------------------"<<endl;
 	cout<<"Masukkkan No.Pendaftaran : ";cin>>cari;
@@ -277,13 +277,13 @@ void sequential(int &data){ //system("cls");
 	}
 }
 
-void bubble(biodata bdt[], int &data){ system("cls");
+void bubble(biodata bdt[], int &data){ system("cls"); //membandingkan setiap index lngs
 	int  i, j;
 	biodata temp;
 	for(i=0; i<data-1; i++){
 		for(j=0; j<data-1-i; j++){
 			if( bdt[j].nopen > bdt[j+1].nopen ){
-				temp = bdt[j];
+				temp = bdt[j]; 
 				bdt[j] = bdt[j+1];
 				bdt[j+1] = temp;
 			}
@@ -306,7 +306,7 @@ void selection(biodata bdt[], int &data){ system("cls");
 	urutan(bdt,data);
 }
 
-void insertion(biodata bdt[], int &data){ system("cls");
+void insertion(biodata bdt[], int &data){ 
 	int i,j ;
 	for(i=1; i<data; i++){
 		temp = bdt[i];
@@ -338,11 +338,10 @@ void shell(biodata bdt[], int &data){ system("cls");
 	urutan(bdt, data);
 }
 
-void quick(biodata bdt[], int low, int high){ //system("cls");
-	if(low < high){
+void quick(biodata bdt[], int low, int high){ 
+	if(low < high){ //low =0 & high = data
 		int get = low;
 		int j;
-		//change order
 		for(int i=low; i<high; i++){
 			if(bdt[i].nopen < bdt[get].nopen){
 				for(j =i; j>get; j--){
@@ -473,7 +472,7 @@ void bacadata(ifstream &data_masuk, int &data, biodata bdt[], string &namafile){
 	i = 0;
 	if(data_masuk.is_open() && batas_output1.is_open() && batas_output3.is_open()){
 		
-		while(!batas_output3.eof()){
+		while(!batas_output3.eof()){	//mengembalikan nilai TRUE ketika file yang  dibaca telah mencapai akhir konten 
 			batas_output3>>bdt[i].fasil;
 			i++;
 		}
@@ -504,10 +503,9 @@ void bacadata(ifstream &data_masuk, int &data, biodata bdt[], string &namafile){
 					cout<<"Nama fasilitas : "<<bdt[i].fslts[a].nama_fasilitas<<endl;
 					cout<<"Biaya : "<<bdt[i].fslts[a].biaya<<endl;
 				}
-			}
+			}cout<<endl<<endl;
 	}else{
 		cout << "File " << namafile << " tidak ditemukan" << endl;
-		input.close();
 		data_masuk.close();
 		batas_output1.close();
 		batas_output3.close();
@@ -574,5 +572,4 @@ void tulisdata_urut(ofstream &data_tulis, int &data, biodata bdt[], string &hasi
 				data_tulis.close();
 			batas_input3.close();
 	}
-
 
